@@ -23,3 +23,12 @@ void bubbleSort(int *vetor, int tamanho) {
   }
 }
 
+//Funcao usada pelo qsort para comparar dois numeros
+int compare_ints( const void* a, const void* b ) {
+     int* arg1 = (int*) a;
+     int* arg2 = (int*) b;
+     if( *arg1 < *arg2 ) return -1;
+     else if( *arg1 == *arg2 ) return 0;
+     else return 1;
+}
+

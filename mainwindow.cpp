@@ -1,3 +1,4 @@
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "functions.h"
@@ -31,7 +32,7 @@ void MainWindow::on_Executar_clicked()
     iter = (ui->n_iteracoes->text()).toInt();
 
     int n_dados = ((tam_max-tam_min)/passo)+1;
-    QVector<double> x(n_dados), y(n_dados);
+    QVector<double> xBubble(n_dados), yBubble(n_dados), xQuick(n_dados), yQuick(n_dados);
 
 
     clock_t clock1, clock2;
@@ -39,18 +40,30 @@ void MainWindow::on_Executar_clicked()
     {
         vetor = new int[i];
         criarVetor(i,vetor);
-        x[j] = i;
-        clock1 = clock();
-        bubbleSort(vetor, i);
-        clock2 = clock();
-        y[j] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
+        if(ui->checkBubble->isChecked()){
+            xBubble[j] = i;
+            clock1 = clock();
+            bubbleSort(vetor, i);
+            clock2 = clock();
+            yBubble[j] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
+        }
+        if(ui->checkQuick->isChecked()){
+            xQuick[j] = i;
+            clock1 = clock();
+            qsort (vetor, i, sizeof(int), compare_ints);
+            clock2 = clock();
+            yQuick[j] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
+        }
     }
 
     ui->customPlot->addGraph();
-    ui->customPlot->graph(0)->setData(x, y);
+    ui->customPlot->graph(0)->setData(xBubble, yBubble);
+    ui->customPlot->addGraph();
+    ui->customPlot->graph(1)->setData(xQuick, yQuick);
     ui->customPlot->xAxis->setLabel("Tamanho do Vetor");
     ui->customPlot->yAxis->setLabel("Tempo (segundos)");
-    ui->customPlot->rescaleAxes();
+    ui->customPlot->graph(0)->rescaleAxes();
+    ui->customPlot->graph(1)->rescaleAxes(true);
     ui->customPlot->replot();
 
 
