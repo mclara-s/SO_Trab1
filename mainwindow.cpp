@@ -50,8 +50,7 @@ void MainWindow::on_Executar_clicked()
     ui->customPlot->graph(0)->setData(x, y);
     ui->customPlot->xAxis->setLabel("Tamanho do Vetor");
     ui->customPlot->yAxis->setLabel("Tempo (segundos)");
-    ui->customPlot->xAxis->setRange(tam_min, tam_max);
-    ui->customPlot->yAxis->setRange(0, 1);
+    ui->customPlot->rescaleAxes();
     ui->customPlot->replot();
 
 
