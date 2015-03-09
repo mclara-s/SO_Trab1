@@ -24,7 +24,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -58,7 +58,11 @@
         <widget class="QLineEdit" name="n_iteracoes"/>
        </item>
        <item>
-        <widget class="QLineEdit" name="dimensoesV"/>
+        <widget class="QLineEdit" name="dimensoesV">
+         <property name="inputMask">
+          <string>#####:#####:#####</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -107,7 +111,7 @@
      <x>0</x>
      <y>0</y>
      <width>630</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
