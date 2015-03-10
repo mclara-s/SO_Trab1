@@ -45,22 +45,30 @@ void MainWindow::on_Executar_clicked()
         clock_t clock1, clock2;
         for (int i = tam_min, j = 0; i<= tam_max; i+=passo, j++)
         {
-            vetor = new int[i];
-            criarVetor(i,vetor);
-            if(ui->checkBubble->isChecked()){
-                xBubble[j] = i;
-                clock1 = clock();
-                bubbleSort(vetor, i);
-                clock2 = clock();
-                yBubble[j] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
+            //xBubble = 0; yBubble = 0; xQuick = 0; yQuick = 0;
+            for(int it = 0; it < iter; it++)
+            {
+                vetor = new int[i];
+                criarVetor(i,vetor);
+                if(ui->checkBubble->isChecked()){
+                    xBubble[j] += i;
+                    clock1 = clock();
+                    bubbleSort(vetor, i);
+                    clock2 = clock();
+                    yBubble[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
+                }
+                if(ui->checkQuick->isChecked()){
+                    xQuick[j] += i;
+                    clock1 = clock();
+                    qsort (vetor, i, sizeof(int), compare_ints);
+                    clock2 = clock();
+                    yQuick[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
+                }
             }
-            if(ui->checkQuick->isChecked()){
-                xQuick[j] = i;
-                clock1 = clock();
-                qsort (vetor, i, sizeof(int), compare_ints);
-                clock2 = clock();
-                yQuick[j] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
-            }
+            //Calculo desvio padrão
+
+            //Calculo da média
+            xBubble[j] /= iter; yBubble[j] /= iter; xQuick[j] /= iter; yQuick[j] /= iter;
         }
 
         ui->customPlot->addGraph();
