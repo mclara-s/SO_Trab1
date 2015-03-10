@@ -26,26 +26,25 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_Executar_clicked()
 {
-    if (!(ui->checkBubble->isChecked()) && !(ui->checkQuick->isChecked())){
-         QMessageBox::information(this, tr("Erro"), tr("Voce deve escolher algum tipo de busca!"));
-    }
-    if (ui->dimensoesV->text().isEmpty()){
-         QMessageBox::information(this, tr("Erro"), tr("Todos os campos devem ser preenchidos!"));
-    }
-
     QStringList dim = (ui->dimensoesV->text()).split(":");
 
     tam_min = dim[0].toInt();
     passo = dim[1].toInt();
     tam_max = dim[2].toInt();
+    iter = (ui->n_iteracoes->text()).toInt();
+
+    if (!(ui->checkBubble->isChecked()) && !(ui->checkQuick->isChecked())){
+         QMessageBox::information(this, tr("Erro"), tr("Voce deve escolher algum tipo de busca!"));
+    }
+    if (ui->dimensoesV->text().isEmpty() || iter == 0){
+         QMessageBox::information(this, tr("Erro"), tr("Você deve fazer pelo menos uma iteração!"));
+    }
 
     if (dim[0].isEmpty() || dim[1].isEmpty() || dim[2].isEmpty() || tam_max < tam_min){
        QMessageBox::information(this, tr("Erro"), tr("As dimensões não estão corretas!"));
     }
 
     else{
-
-        iter = (ui->n_iteracoes->text()).toInt();
 
         int n_dados = ((tam_max-tam_min)/passo)+1;
         QVector<double> xBubble(n_dados), yBubble(n_dados), xQuick(n_dados), yQuick(n_dados);
