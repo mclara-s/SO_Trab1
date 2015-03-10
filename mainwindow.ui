@@ -57,7 +57,7 @@
        <item>
         <widget class="QLineEdit" name="n_iteracoes">
          <property name="inputMask">
-          <string>dd</string>
+          <string>00</string>
          </property>
         </widget>
        </item>
@@ -115,7 +115,7 @@
      <x>0</x>
      <y>0</y>
      <width>630</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
