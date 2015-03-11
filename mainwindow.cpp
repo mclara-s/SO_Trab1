@@ -13,10 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-   // if(!() && !())
-     //   ui->Executar->setEnabled(true);
-// && (ui->checkBubble->isChecked() || ui->checkQuick->isChecked())
-
 }
 
 MainWindow::~MainWindow()
@@ -49,6 +45,7 @@ void MainWindow::on_Executar_clicked()
         int n_dados = ((tam_max-tam_min)/passo)+1;
         QVector<double> x(n_dados), yBubble(n_dados), yQuick(n_dados);
         QVector<double>  yDpBubble(iter), yDpQuick(iter), DpBubble(n_dados), DpQuick(n_dados);
+
 
         clock_t clock1, clock2;
         for (int i = tam_min, j = 0; i<= tam_max; i+=passo, j++)
@@ -94,6 +91,9 @@ void MainWindow::on_Executar_clicked()
 
         }
 
+        ui->customPlot->clearGraphs();
+        ui->customPlot->legend->clearItems();
+
         //Plotando o Gráfico do Bubble Sort
         ui->customPlot->addGraph();
         ui->customPlot->graph(0)->setErrorType(QCPGraph::etValue);
@@ -102,7 +102,6 @@ void MainWindow::on_Executar_clicked()
         ui->customPlot->graph(0)->setPen(QPen(Qt::blue));
         ui->customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 3));
         ui->customPlot->graph(0)->setName("Bubble Sort");
-
 
         //Plotando o Gráfico do Quick Sort
         ui->customPlot->addGraph();
@@ -113,7 +112,6 @@ void MainWindow::on_Executar_clicked()
         ui->customPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 3));
         ui->customPlot->graph(1)->setName("Quick Sort");
 
-
         //Reescalar os eixos para os maiores valores
         if (ui->checkQuick->isChecked() && !(ui->checkBubble->isChecked()))
         {
@@ -123,6 +121,11 @@ void MainWindow::on_Executar_clicked()
             ui->customPlot->graph(0)->rescaleAxes();
         }
 
+        //Ajustar Legenda
+        ui->customPlot->axisRect()->insetLayout()->setInsetAlignment(0,Qt::AlignLeft|Qt::AlignTop);
+        ui->customPlot->legend->setVisible(true);
+
+        //Ajustar Eixos
         ui->customPlot->xAxis->setLabel("Tamanho do Vetor");
         ui->customPlot->yAxis->setLabel("Tempo (segundos)");
         ui->customPlot->xAxis->setRange(0,tam_max+passo);
