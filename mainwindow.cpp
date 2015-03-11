@@ -46,15 +46,16 @@ void MainWindow::on_Executar_clicked()
 
     else{
 
-        int n_dados = ((tam_max-tam_min)/passo)+1, Dp = 0;
-        QVector<double> xBubble(n_dados), yBubble(n_dados), xQuick(n_dados), yQuick(n_dados), yDpBubble(iter), yDpQuick(iter);
-
+        int n_dados = ((tam_max-tam_min)/passo)+1;
+        QVector<double> x(n_dados), yBubble(n_dados), yQuick(n_dados);
+        QVector<double>  yDpBubble(iter), yDpQuick(iter), DpBubble(n_dados), DpQuick(n_dados);
 
         clock_t clock1, clock2;
         for (int i = tam_min, j = 0; i<= tam_max; i+=passo, j++)
         {
-            xBubble[j] = i;
-            xQuick[j] = i;
+            DpBubble[j] = 0;
+            DpQuick[j] = 0;
+            x[j] = i;
 
             //xBubble = 0; yBubble = 0; xQuick = 0; yQuick = 0;
             for(int it = 0; it < iter; it++)
@@ -65,15 +66,15 @@ void MainWindow::on_Executar_clicked()
                     clock1 = clock();
                     bubbleSort(vetor, i);
                     clock2 = clock();
-                    yBubble[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
-                    yDpBubble[it] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
+                    yBubble[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;       //Somatório para calcular a média
+                    yDpBubble[it] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;     //Tempo em cada iteração para calcular D.p.
                 }
                 if(ui->checkQuick->isChecked()){
                     clock1 = clock();
                     qsort (vetor, i, sizeof(int), compare_ints);
                     clock2 = clock();
-                    yQuick[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
-                    yDpQuick[it] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;
+                    yQuick[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;        //Somatório para calcular a média
+                    yDpQuick[it] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;      //Tempo em cada iteração para calcular D.p.
                 }
             }
 
@@ -85,26 +86,40 @@ void MainWindow::on_Executar_clicked()
             //desvio = valor - media;
             for (int it = 0; it< iter; it++)
             {
-                Dp += (yDpBubble[it] - yBubble[j])*(yDpBubble[it] - yBubble[j]);
+                DpBubble[j] += (yDpBubble[it] - yBubble[j])*(yDpBubble[it] - yBubble[j]);
+                DpQuick[j] += (yDpQuick[it] - yQuick[j])*(yDpQuick[it] - yQuick[j]);
             }
-            Dp = sqrt(Dp/iter);
+            DpBubble[j] = sqrt(DpBubble[j]/iter);
+            DpQuick[j] = sqrt(DpQuick[j]/iter);
 
         }
 
         ui->customPlot->addGraph();
-        ui->customPlot->graph(0)->setData(xBubble, yBubble);
+        //ui->customPlot->graph(0)->setData(xBubble, yBubble);
+        ui->customPlot->graph(0)->setErrorType(QCPGraph::etValue);
+        ui->customPlot->graph(0)->setErrorPen(QPen(Qt::blue));
+        ui->customPlot->graph(0)->setDataValueError(x, yBubble, DpBubble);
         ui->customPlot->graph(0)->setPen(QPen(Qt::blue));
-        ui->customPlot->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 3));
+        ui->customPlot->graph(0)->setName("Bubble Sort");
+
+
         ui->customPlot->addGraph();
-        ui->customPlot->graph(1)->setData(xQuick, yQuick);
+        //ui->customPlot->graph(1)->setData(xQuick, yQuick);
+        ui->customPlot->graph(1)->setErrorType(QCPGraph::etValue);
+        ui->customPlot->graph(1)->setErrorPen(QPen(Qt::red));
+        ui->customPlot->graph(1)->setDataValueError(x, yQuick, DpQuick);
         ui->customPlot->graph(1)->setPen(QPen(Qt::red));
-        ui->customPlot->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->customPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 3));
+        ui->customPlot->graph(1)->setName("Quick Sort");
+        ui->customPlot->graph(1)->rescaleAxes();
+        ui->customPlot->graph(0)->rescaleAxes();
+
         ui->customPlot->xAxis->setLabel("Tamanho do Vetor");
         ui->customPlot->yAxis->setLabel("Tempo (segundos)");
-        ui->customPlot->graph(0)->rescaleAxes();
-        ui->customPlot->graph(1)->rescaleAxes(true);
-        ui->customPlot->xAxis->setRangeLower(0);
+        ui->customPlot->xAxis->setRange(0,tam_max+passo);
         ui->customPlot->yAxis->setRangeLower(0);
+
         ui->customPlot->replot();
 }
 
