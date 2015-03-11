@@ -94,9 +94,11 @@ void MainWindow::on_Executar_clicked()
         ui->customPlot->addGraph();
         ui->customPlot->graph(0)->setData(xBubble, yBubble);
         ui->customPlot->graph(0)->setPen(QPen(Qt::blue));
+        ui->customPlot->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
         ui->customPlot->addGraph();
         ui->customPlot->graph(1)->setData(xQuick, yQuick);
         ui->customPlot->graph(1)->setPen(QPen(Qt::red));
+        ui->customPlot->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
         ui->customPlot->xAxis->setLabel("Tamanho do Vetor");
         ui->customPlot->yAxis->setLabel("Tempo (segundos)");
         ui->customPlot->graph(0)->rescaleAxes();
