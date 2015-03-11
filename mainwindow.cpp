@@ -94,8 +94,8 @@ void MainWindow::on_Executar_clicked()
 
         }
 
+        //Plotando o Gráfico do Bubble Sort
         ui->customPlot->addGraph();
-        //ui->customPlot->graph(0)->setData(xBubble, yBubble);
         ui->customPlot->graph(0)->setErrorType(QCPGraph::etValue);
         ui->customPlot->graph(0)->setErrorPen(QPen(Qt::blue));
         ui->customPlot->graph(0)->setDataValueError(x, yBubble, DpBubble);
@@ -104,16 +104,24 @@ void MainWindow::on_Executar_clicked()
         ui->customPlot->graph(0)->setName("Bubble Sort");
 
 
+        //Plotando o Gráfico do Quick Sort
         ui->customPlot->addGraph();
-        //ui->customPlot->graph(1)->setData(xQuick, yQuick);
         ui->customPlot->graph(1)->setErrorType(QCPGraph::etValue);
         ui->customPlot->graph(1)->setErrorPen(QPen(Qt::red));
         ui->customPlot->graph(1)->setDataValueError(x, yQuick, DpQuick);
         ui->customPlot->graph(1)->setPen(QPen(Qt::red));
         ui->customPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 3));
         ui->customPlot->graph(1)->setName("Quick Sort");
-        ui->customPlot->graph(1)->rescaleAxes();
-        ui->customPlot->graph(0)->rescaleAxes();
+
+
+        //Reescalar os eixos para os maiores valores
+        if (ui->checkQuick->isChecked() && !(ui->checkBubble->isChecked()))
+        {
+            ui->customPlot->graph(1)->rescaleAxes();
+        }
+        else{
+            ui->customPlot->graph(0)->rescaleAxes();
+        }
 
         ui->customPlot->xAxis->setLabel("Tamanho do Vetor");
         ui->customPlot->yAxis->setLabel("Tempo (segundos)");
