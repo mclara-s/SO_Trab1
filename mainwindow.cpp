@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->progressBar->setValue(0);
 
 }
 
@@ -42,7 +43,7 @@ void MainWindow::on_Executar_clicked()
 
     else{
 
-        int n_dados = ((tam_max-tam_min)/passo)+1;
+        int n_dados = ((tam_max-tam_min)/passo)+1, count;
         QVector<double> x(n_dados), yBubble(n_dados), yQuick(n_dados);
         QVector<double>  yDpBubble(iter), yDpQuick(iter), DpBubble(n_dados), DpQuick(n_dados);
 
@@ -53,6 +54,7 @@ void MainWindow::on_Executar_clicked()
             DpBubble[j] = 0;
             DpQuick[j] = 0;
             x[j] = i;
+            count = 1;
 
             //xBubble = 0; yBubble = 0; xQuick = 0; yQuick = 0;
             for(int it = 0; it < iter; it++)
@@ -73,6 +75,8 @@ void MainWindow::on_Executar_clicked()
                     yQuick[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;        //Somatório para calcular a média
                     yDpQuick[it] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;      //Tempo em cada iteração para calcular D.p.
                 }
+                ui->progressBar->setValue(count*100/(iter));
+                count++;
             }
 
             //Calculo da média
