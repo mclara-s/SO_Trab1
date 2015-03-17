@@ -49,12 +49,16 @@ void MainWindow::on_Executar_clicked()
 
 
         clock_t clock1, clock2;
+        int totalIter = n_dados*iter;
+        if(ui->checkBubble->isChecked() && (ui->checkQuick->isChecked()))
+                totalIter *= 2;
+        count = 0;
         for (int i = tam_min, j = 0; i<= tam_max; i+=passo, j++)
         {
             DpBubble[j] = 0;
             DpQuick[j] = 0;
             x[j] = i;
-            count = 1;
+
 
             //xBubble = 0; yBubble = 0; xQuick = 0; yQuick = 0;
             for(int it = 0; it < iter; it++)
@@ -65,6 +69,7 @@ void MainWindow::on_Executar_clicked()
                     clock1 = clock();
                     bubbleSort(vetor, i);
                     clock2 = clock();
+                    count++;
                     yBubble[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;       //Somatório para calcular a média
                     yDpBubble[it] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;     //Tempo em cada iteração para calcular D.p.
                 }
@@ -72,11 +77,12 @@ void MainWindow::on_Executar_clicked()
                     clock1 = clock();
                     qsort (vetor, i, sizeof(int), compare_ints);
                     clock2 = clock();
+                    count++;
                     yQuick[j] += (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;        //Somatório para calcular a média
                     yDpQuick[it] = (double)(clock2-clock1)/(double)CLOCKS_PER_SEC;      //Tempo em cada iteração para calcular D.p.
                 }
-                ui->progressBar->setValue(count*100/(iter));
-                count++;
+//                count++;
+                ui->progressBar->setValue(count*100/(totalIter));
             }
 
             //Calculo da média
