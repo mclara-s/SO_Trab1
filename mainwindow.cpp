@@ -48,11 +48,12 @@ void MainWindow::on_Executar_clicked()
         QVector<double>  yDpBubble(iter), yDpQuick(iter), DpBubble(n_dados), DpQuick(n_dados);
 
 
-        clock_t clock1, clock2;
+        clock_t clock1, clock2, tTotal1, tTotal2;
         int totalIter = n_dados*iter;
         if(ui->checkBubble->isChecked() && (ui->checkQuick->isChecked()))
                 totalIter *= 2;
         count = 0;
+        tTotal1 = clock();
         for (int i = tam_min, j = 0; i<= tam_max; i+=passo, j++)
         {
             DpBubble[j] = 0;
@@ -100,9 +101,11 @@ void MainWindow::on_Executar_clicked()
             DpQuick[j] = sqrt(DpQuick[j]/iter);
 
         }
+        tTotal2 = clock();
 
         ui->customPlot->clearGraphs();
         ui->customPlot->legend->clearItems();
+        ui->customPlot->clearItems();
 
         //Plotando o Gráfico do Bubble Sort
         ui->customPlot->addGraph();
@@ -122,6 +125,44 @@ void MainWindow::on_Executar_clicked()
         ui->customPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 3));
         ui->customPlot->graph(1)->setName("Quick Sort");
 
+        //Porcentagen
+        QString porcentagem;
+        double value, tempoTotal = (double)(tTotal2 - tTotal1)/(double)CLOCKS_PER_SEC;
+
+/*        //Tempo Total
+        QCPItemText *textLabel = new QCPItemText(ui->customPlot);
+        ui->customPlot->addItem(textLabel);
+        textLabel->setPositionAlignment(Qt::AlignTop |Qt::AlignLeading);
+        textLabel->position->setType(QCPItemPosition::ptPlotCoords);
+        textLabel->position->setCoords(x[0], yBubble[n_dados/2]);
+        textLabel->setText(QString::number(tempoTotal));
+*/
+        //Em Cada Ponto
+        for (int i = 0; i < n_dados; i++){
+            if(ui->checkBubble->isChecked()){
+                QCPItemText *textLabel = new QCPItemText(ui->customPlot);
+                ui->customPlot->addItem(textLabel);
+                textLabel->setPositionAlignment(Qt::AlignBottom |Qt::AlignRight);
+                textLabel->position->setType(QCPItemPosition::ptPlotCoords);
+                textLabel->position->setCoords(x[i], yBubble[i]);
+                value = round(((yBubble[i]*100)/tempoTotal)*100)/100;
+                porcentagem = QString::number(value);
+                textLabel->setText(porcentagem + "%");
+            }
+            if(ui->checkQuick->isChecked()){
+                QCPItemText *textLabel2 = new QCPItemText(ui->customPlot);
+                ui->customPlot->addItem(textLabel2);
+                textLabel2->setPositionAlignment(Qt::AlignBottom |Qt::AlignRight);
+                textLabel2->position->setType(QCPItemPosition::ptPlotCoords);
+                textLabel2->position->setCoords(x[i], yQuick[i]);
+                value = round(((yQuick[i]*100)/tempoTotal)*100)/100;
+                porcentagem = QString::number(value);
+                textLabel2->setText(porcentagem + "%");
+            }
+
+        }
+
+
         //Reescalar os eixos para os maiores valores
         if (ui->checkQuick->isChecked() && !(ui->checkBubble->isChecked()))
         {
@@ -138,7 +179,7 @@ void MainWindow::on_Executar_clicked()
         //Ajustar Eixos
         ui->customPlot->xAxis->setLabel("Tamanho do Vetor");
         ui->customPlot->yAxis->setLabel("Tempo (segundos)");
-        ui->customPlot->xAxis->setRange(0,tam_max+passo);
+        ui->customPlot->xAxis->setRange(0,tam_max + passo);
         ui->customPlot->yAxis->setRangeLower(0);
 
         ui->customPlot->replot();
