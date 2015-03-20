@@ -44,7 +44,7 @@ void MainWindow::on_Executar_clicked()
     else{
 
         int n_dados = ((tam_max-tam_min)/passo)+1, count;
-        QVector<double> x(n_dados), yBubble(n_dados), yQuick(n_dados);
+        QVector<double> x(n_dados), yBubble(n_dados), yQuick(n_dados), somaTBubble(n_dados), somaTQuick(n_dados);
         QVector<double>  yDpBubble(iter), yDpQuick(iter), DpBubble(n_dados), DpQuick(n_dados);
 
 
@@ -85,6 +85,9 @@ void MainWindow::on_Executar_clicked()
 //                count++;
                 ui->progressBar->setValue(count*100/(totalIter));
             }
+
+            somaTBubble[j] = yBubble[j];
+            somaTQuick[j] = yQuick[j];
 
             //Calculo da média
             yBubble[j] /= iter;
@@ -145,7 +148,7 @@ void MainWindow::on_Executar_clicked()
                 textLabel->setPositionAlignment(Qt::AlignBottom |Qt::AlignRight);
                 textLabel->position->setType(QCPItemPosition::ptPlotCoords);
                 textLabel->position->setCoords(x[i], yBubble[i]);
-                value = round(((yBubble[i]*100)/tempoTotal)*100)/100;
+                value = round(((somaTBubble[i]*100)/tempoTotal)*100)/100;
                 porcentagem = QString::number(value);
                 textLabel->setText(porcentagem + "%");
             }
@@ -155,7 +158,7 @@ void MainWindow::on_Executar_clicked()
                 textLabel2->setPositionAlignment(Qt::AlignBottom |Qt::AlignRight);
                 textLabel2->position->setType(QCPItemPosition::ptPlotCoords);
                 textLabel2->position->setCoords(x[i], yQuick[i]);
-                value = round(((yQuick[i]*100)/tempoTotal)*100)/100;
+                value = round(((somaTQuick[i]*100)/tempoTotal)*100)/100;
                 porcentagem = QString::number(value);
                 textLabel2->setText(porcentagem + "%");
             }
@@ -167,9 +170,11 @@ void MainWindow::on_Executar_clicked()
         if (ui->checkQuick->isChecked() && !(ui->checkBubble->isChecked()))
         {
             ui->customPlot->graph(1)->rescaleAxes();
+            ui->customPlot->yAxis->setRangeUpper((yQuick[n_dados-1]+DpQuick[n_dados-1])*1.1); //Apenas para o gráfico não cortar os dados
         }
         else{
             ui->customPlot->graph(0)->rescaleAxes();
+            ui->customPlot->yAxis->setRangeUpper((yBubble[n_dados-1]+DpBubble[n_dados-1])*1.1);
         }
 
         //Ajustar Legenda
